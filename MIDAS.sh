@@ -59,13 +59,8 @@ function show_help() {
     echo  ""
     echo  "The next option is used in the case you have specific genomes already downloaded. Write the folder were they are"
     echo "-genome_directories < write path/to/folder were specific genomes are"
-    
-    
-return 0
 }
 
-#print function version
-version
 
 while [ ! -z "$1" ]
 do
@@ -160,6 +155,9 @@ mkdir -p $checkm
 mkdir -p $tmp_dir_check
 mkdir -p $genomes_checkm
 mkdir -p $checkm_final
+
+#print function version
+version
 
 #create database: just with specific taxa
 if [ "$specific" = "y" ]
