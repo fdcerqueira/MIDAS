@@ -4,17 +4,17 @@
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
 ##metasqueeze project directory and sorted bams directory
-project=/EVBfrancisco/final_final/Binning/final
+project=$(cat /var/tmp/project.$PPID)
 
 ##project name
-project_name=final
+project_name=$(cat /var/tmp/project_name.$PPID)
 
 ##read the output directory chosen during the assembly.sh script
-START_DIR=/EVBfrancisco/final_final
+START_DIR=$(cat /var/tmp/outputDir.$PPID)
 
 #filtered fastq files
 #/EVBfrancisco/final_final/filtered_reads/host_removal add in assembly script PPID
-merged=/EVBfrancisco/final_final/host_removal
+merged=$(cat /var/tmp/host_removal.$PPID)
 
 #auxiliary scripts
 download_genomes=$SCRIPT_DIR/midas_parse_taxa.py
@@ -39,10 +39,10 @@ checkm_final=$checkm/final
 dereplicated=$midas_database/dereplicated
 
 function version() {
-    echo "Script: midas.sh"
+    echo "Script: MIDAS.sh"
     echo "Author: Francisco Cerqueira"
     echo "Version: 1.0"
-    echo "Date of creation: xx/xx/xxxx"
+    echo "Date of creation: 03/09/2022"
 }
 
 function show_help() {
@@ -68,7 +68,7 @@ return 0
 version
 
 while [ ! -z "$1" ]
- do
+do
       case "$1" in
 
       -n) shift 1; CORES=$1 ;;
@@ -136,7 +136,7 @@ function copy_genomes(){
 
         mkdir -p $genomes/${filename}
         cp $i $genomes/${filename}
-    }
+}
 
 function fname {
     R1=$(basename $i)
@@ -184,9 +184,9 @@ then
     awk 'BEGIN {FS= "\t"} $12 >= 50 && $13 <= 10 {print $1} ' \
     $project/results/DAS/${project_name}_DASTool_summary.txt > $project/results/DAS/bins.txt
 	
-	#add ending pattern to all files
+    #add ending pattern to all files
     cp $project/results/DAS/bins.txt $MIDAS/midas.txt
-	sed -e 's/$/.contigs.fa/' -i $MIDAS/midas.txt     
+    sed -e 's/$/.contigs.fa/' -i $MIDAS/midas.txt     
     
     #add path to list
     awk '$1="'$project/results/DAS/${project_name}_DASTool_bins/'"$1' $MIDAS/midas.txt > $MIDAS/bins.txt
@@ -229,43 +229,43 @@ then
     
     cp $original/*.fa* $genomes_checkm
 
-	eval "$(conda shell.bash hook)"
-	conda activate checkm
-	
-	###run checkM separatly. There is a conflict with dRep
-	checkm lineage_wf \
-	-t ${CORES} \
-	-x fa \
-	--tmpdir $tmp_dir_check \
-	$genomes_checkm \
-	${checkm}
-
-	###get table
-	checkm qa $checkm/*.ms ${checkm} \
-	--file ${checkm_final}/bins.csv \
-	--threads ${CORES} \
-	-o 1
-    	
-	##python file
-	echo "changing checkM output file structure for dREP"
-	python $format ${checkm_final}/bins.csv > ${checkm_final}/checkm_out.csv
-
-	echo "dereplicating co-assembly MAGs"
     eval "$(conda shell.bash hook)"
-	conda activate instrain
+    conda activate checkm
 	
-	dRep dereplicate $dereplicated \
-	-g ${genomes_checkm}/*.fa \
-	--S_algorithm ANImf \
-	--genomeInfo ${checkm_final}/checkm_out.csv \
-	-comp 50 \
-	-con 10 \
-	-ms 10000 \
-	-pa 0.9 \
-	-sa 0.95 \
-	-nc 0.30 \
-	-cm larger \
-	-p ${CORES}
+    ###run checkM separatly. There is a conflict with dRep
+    checkm lineage_wf \ 
+    -t ${CORES} \
+    -x fa \
+    --tmpdir $tmp_dir_check \
+    $genomes_checkm \
+    ${checkm}
+
+    ###get table
+    checkm qa $checkm/*.ms ${checkm} \
+    --file ${checkm_final}/bins.csv \
+    --threads ${CORES} \
+    -o 1
+    	
+    ##python file
+    echo "changing checkM output file structure for dREP"
+    python $format ${checkm_final}/bins.csv > ${checkm_final}/checkm_out.csv
+
+    echo "dereplicating co-assembly MAGs"
+    eval "$(conda shell.bash hook)"
+    conda activate instrain
+	
+    dRep dereplicate $dereplicated \
+    -g ${genomes_checkm}/*.fa \
+    --S_algorithm ANImf \
+    --genomeInfo ${checkm_final}/checkm_out.csv \
+    -comp 50 \
+    -con 10 \
+    -ms 10000 \
+    -pa 0.9 \
+    -sa 0.95 \
+    -nc 0.30 \
+    -cm larger \
+    -p ${CORES}
 
     for i in $dereplicated/dereplicated_genomes/*.fa*
     do
@@ -285,7 +285,7 @@ for i in $(find $genomes/* -type f -name "*.fa*")
 do 
     filename=$(basename $i)
     
-        prokka --outdir $genomes/${filename} --force --prefix ${filename} --cpus 0 $i 
+    prokka --outdir $genomes/${filename} --force --prefix ${filename} --cpus 0 $i 
 done
 
 #confirm number of columns, create .genes files
@@ -321,12 +321,12 @@ done
 #remove extra bins (from origial file information)
 if [ "$metagenome" = "y" ]
 then
-for i in $genomes/*/*.fa
-do
-    filename=$(basename $i)
+    for i in $genomes/*/*.fa
+    do
+    	filename=$(basename $i)
     
-    echo "$filename" >> $midas_database/intermediated.txt
-done
+    	echo "$filename" >> $midas_database/intermediated.txt
+    done
 
 awk 'FNR==NR {a[$1];next} $1 in a' $midas_database/intermediated.txt $midas_database/intermediate.map > $midas_database/intermediate.mapfile
 fi
@@ -370,6 +370,7 @@ then
     echo "genome.mapfile is empty"
     exit 1  
 fi 
+
 #if metagenome file exists then apend it to the main file
 if [ "$metagenome" = "y" ]
 then
