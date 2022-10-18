@@ -47,7 +47,7 @@ function version() {
 
 function show_help() {
 
-    echo "The script will run MIDAS worflow, and/or will install MIDAS and its necessary dependencies"
+    echo "The script will run MIDAS worflow"
     echo ""
     echo "How to use: $0 parameters"
     echo "-n <number of cpus to be used>"
