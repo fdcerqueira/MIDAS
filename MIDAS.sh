@@ -50,15 +50,14 @@ function show_help() {
     echo "The script will run MIDAS worflow, and/or will install MIDAS and its necessary dependencies"
     echo ""
     echo "How to use: $0 parameters"
-    echo  "-n <number of cpus to be used>"
-    echo  ""
-    echo  "-specific <if you want to use specific genomes. it will ask for the NCBI genome acession"
-    echo "-drep <to used dereplication at 95% ANI"
-    echo  "-metagenome < (y/n) if you want to use the genomes assembled from your metagenome>"
-    echo  "-instal<install MIDAS and dependencies>"
-    echo  ""
-    echo  "The next option is used in the case you have specific genomes already downloaded. Write the folder were they are"
-    echo "-genome_directories < write path/to/folder were specific genomes are"
+    echo "-n <number of cpus to be used>"
+    echo ""
+    echo "-specific <if you want to use specific genomes. it will ask for the NCBI genome acession>"
+    echo "-drep <to used dereplication at 95% ANI>"
+    echo "-metagenome < (y/n) if you want to use the genomes assembled from your metagenome>"
+    echo ""
+    echo "The next option is used in the case you have specific genomes already downloaded. Write the folder were they are"
+    echo "-genome_directories <write path/to/folder were specific genomes are>"
 }
 
 
