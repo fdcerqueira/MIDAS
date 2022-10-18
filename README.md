@@ -2,7 +2,7 @@
 
 Pipeline to process in easy way the metagenome assembled genomes (MAGs) obtained from the Metagenomics workflow (binning.sh) in the repository fdcerqueira/Metagenomics.
 
-The aim of this pipeline is to process the metagenomics data and detect SNVs in metagenomic assembled genomes (MAGs) with the MIDAS software.
+The aim of this pipeline is to process the metagenomics data and detect SNVs in metagenomic assembled genomes (MAGs), or any other specific genomes with the MIDAS software.
 
 The script will prepare all the necessary files, create a custom database, with the genomes chosen by the user. It may be from a local folder or download them with the NCBI genome acession ID.
 Run MIDAS, and merge SNVs frequencies to the final tables.
